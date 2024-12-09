@@ -80,8 +80,7 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс для змейки."""
 
-    def __init__(self, position=(GRID_WIDTH // 2, GRID_HEIGHT // 2),
-                 body_color=SNAKE_COLOR):
+    def __init__(self, position=(GRID_WIDTH // 2, GRID_HEIGHT // 2), body_color=SNAKE_COLOR):
         """Инициализация змейки с начальной позицией и направлением."""
         self.positions = [position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
@@ -141,25 +140,6 @@ class Snake(GameObject):
             )
             pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
-    def handle_keys(self):
-        """Обработка нажатий клавиш для управления змейкой."""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                raise SystemExit
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and self.direction != DOWN:
-                    self.next_direction = UP
-                elif event.key == pygame.K_DOWN and self.direction != UP:
-                    self.next_direction = DOWN
-                elif event.key == pygame.K_LEFT and self.direction != RIGHT:
-                    self.next_direction = LEFT
-                elif event.key == pygame.K_RIGHT and self.direction != LEFT:
-                    self.next_direction = RIGHT
-                elif event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    raise SystemExit
-
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
         return self.positions[0]
@@ -170,6 +150,26 @@ class Snake(GameObject):
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
         self.last = None
+
+
+def handle_keys(snake):
+    """Обработка нажатий клавиш для управления змейкой."""
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            raise SystemExit
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP and snake.direction != DOWN:
+                snake.next_direction = UP
+            elif event.key == pygame.K_DOWN and snake.direction != UP:
+                snake.next_direction = DOWN
+            elif event.key == pygame.K_LEFT and snake.direction != RIGHT:
+                snake.next_direction = LEFT
+            elif event.key == pygame.K_RIGHT and snake.direction != LEFT:
+                snake.next_direction = RIGHT
+            elif event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                raise SystemExit
 
 
 def main():
@@ -183,7 +183,7 @@ def main():
     while True:
         clock.tick(SPEED)
 
-        snake.handle_keys()
+        handle_keys(snake)
         snake.move()
 
         if snake.positions[0] == apple.position:
