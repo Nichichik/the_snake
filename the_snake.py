@@ -44,7 +44,7 @@ ALL_CELLS = {(x, y) for x in range(GRID_WIDTH) for y in range(GRID_HEIGHT)}
 class GameObject:
     """Базовый класс для всех игровых объектов."""
 
-    def __init__(self, position, body_color):
+    def __init__(self, position=(0, 0), body_color=(0, 0, 0)):
         """
         Инициализация игрового объекта.
 
@@ -69,23 +69,24 @@ class GameObject:
 class Apple(GameObject):
     """Класс для яблока."""
 
-    def __init__(self, snake_positions):
+    def __init__(self, snake_positions, position=None, body_color=APPLE_COLOR):
         """Инициализация яблока с случайной позицией, не на теле змейки."""
-        free_cells = ALL_CELLS - set(snake_positions)
-        position = choice(tuple(free_cells))
-        super().__init__(position, APPLE_COLOR)
+        if position is None:
+            free_cells = ALL_CELLS - set(snake_positions)
+            position = choice(tuple(free_cells))
+        super().__init__(position, body_color)
 
 
 class Snake(GameObject):
     """Класс для змейки."""
 
-    def __init__(self):
+    def __init__(self, position=(GRID_WIDTH // 2, GRID_HEIGHT // 2), body_color=SNAKE_COLOR):
         """Инициализация змейки с начальной позицией и направлением."""
-        self.positions = [(GRID_WIDTH // 2, GRID_HEIGHT // 2)]
+        self.positions = [position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
         self.last = None
-        super().__init__(self.positions[0], SNAKE_COLOR)
+        super().__init__(self.positions[0], body_color)
 
     def move(self):
         """Движение змейки в текущем направлении."""
@@ -157,6 +158,17 @@ class Snake(GameObject):
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     raise SystemExit
+
+    def get_head_position(self):
+        """Возвращает позицию головы змейки."""
+        return self.positions[0]
+
+    def reset(self):
+        """Сбрасывает змейку в начальное состояние."""
+        self.positions = [(GRID_WIDTH // 2, GRID_HEIGHT // 2)]
+        self.direction = choice([UP, DOWN, LEFT, RIGHT])
+        self.next_direction = None
+        self.last = None
 
 
 def main():
