@@ -80,7 +80,8 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс для змейки."""
 
-    def __init__(self, position=(GRID_WIDTH // 2, GRID_HEIGHT // 2), body_color=SNAKE_COLOR):
+    def __init__(self, position=(GRID_WIDTH // 2, GRID_HEIGHT // 2),
+                 body_color=SNAKE_COLOR):
         """Инициализация змейки с начальной позицией и направлением."""
         self.positions = [position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
