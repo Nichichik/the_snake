@@ -18,11 +18,15 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 SPEED = 20
 
+# Глобальные переменные
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()
+
 
 class GameObject:
     """Базовый класс для всех игровых объектов."""
 
-    def __init__(self, position, body_color):
+    def __init__(self, position=(0, 0), body_color=(255, 255, 255)):
         """Инициализирует объект с позицией и цветом."""
         self.position = position
         self.body_color = body_color
@@ -37,7 +41,7 @@ class Apple(GameObject):
 
     def __init__(self):
         """Инициализирует яблоко в случайной позиции."""
-        super().__init__((0, 0), APPLE_COLOR)
+        super().__init__(body_color=APPLE_COLOR)
         self.randomize_position()
 
     def randomize_position(self):
@@ -59,11 +63,15 @@ class Snake(GameObject):
 
     def __init__(self):
         """Инициализирует змейку в начальном состоянии."""
-        super().__init__((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), SNAKE_COLOR)
-        self.positions = [self.position]
+        super().__init__(body_color=SNAKE_COLOR)
+        self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
         self.direction = RIGHT
         self.next_direction = None
         self.length = 1
+
+    def get_head_position(self):
+        """Возвращает позицию головы змейки."""
+        return self.positions[0]
 
     def update_direction(self):
         """Обновляет направление змейки на основе ввода."""
@@ -90,7 +98,7 @@ class Snake(GameObject):
 
     def reset(self):
         """Сбрасывает змейку в начальное состояние."""
-        self.positions = [self.position]
+        self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
         self.direction = RIGHT
         self.length = 1
 
@@ -114,10 +122,7 @@ def handle_keys(snake):
 
 def main():
     """Основная функция игры."""
-    pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption('Змейка')
-    clock = pygame.time.Clock()
 
     snake = Snake()
     apple = Apple()
@@ -129,11 +134,11 @@ def main():
         snake.update_direction()
         snake.move()
 
-        if snake.positions[0] == apple.position:
+        if snake.get_head_position() == apple.position:
             snake.length += 1
             apple.randomize_position()
 
-        if snake.positions[0] in snake.positions[1:]:
+        if snake.get_head_position() in snake.positions[1:]:
             snake.reset()
 
         screen.fill(BOARD_BACKGROUND_COLOR)
